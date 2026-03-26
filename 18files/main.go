@@ -37,11 +37,11 @@ func writeFile() {
 
 func readFile(file string) {
 
-	conent, err := os.ReadFile(file)
+	content, err := os.ReadFile(file)
 
 	checkNilErr(err)
 
-	fmt.Println("Content is: ", string(conent))
+	fmt.Println("Content is: ", string(content))
 }
 
 

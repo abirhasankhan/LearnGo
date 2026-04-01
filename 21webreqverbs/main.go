@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -15,12 +16,14 @@ func main() {
 
 	// PerformGetRequest(baseurl + "get")
 
-	PerformPostJSONRequest(baseurl + "post")
+	// PerformPostJSONRequest(baseurl + "post")
+
+	PerformPostFormRequest(baseurl + "postform")
 }
 
-func PerformGetRequest(url string) {
+func PerformGetRequest(uri string) {
 
-	res, err := http.Get(url)
+	res, err := http.Get(uri)
 
 	if err != nil {
 
@@ -48,7 +51,7 @@ func PerformGetRequest(url string) {
 
 }
 
-func PerformPostJSONRequest(url string) {
+func PerformPostJSONRequest(uri string) {
 
 	// fake JSON payload
 
@@ -61,7 +64,7 @@ func PerformPostJSONRequest(url string) {
 		}
 	`)
 
-	res, err := http.Post(url, "application/json", reqestBody)
+	res, err := http.Post(uri, "application/json", reqestBody)
 
 	if err != nil {
 		panic(err)
@@ -73,4 +76,26 @@ func PerformPostJSONRequest(url string) {
 
 	fmt.Println(string(content))
 
+}
+
+func PerformPostFormRequest(uri string) {
+
+	// form data
+	data := url.Values{}
+
+	data.Add("First Name", "Abir")
+	data.Add("Last Name", "Khan")
+	data.Add("Age", "26")
+
+	res, err := http.PostForm(uri, data)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer res.Body.Close()
+
+	content, _ := io.ReadAll(res.Body)
+
+	fmt.Println(string(content))
 }

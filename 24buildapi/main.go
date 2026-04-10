@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -33,6 +34,67 @@ func (c *Course) IsEmpty() bool {
 
 func main() {
 	fmt.Println("Build API")
+
+	r := mux.NewRouter()
+
+	//seeding
+	courses = append(courses, []Course{
+		{
+			CourseId:   "CS101",
+			CourseName: "Introduction to Programming",
+			Price:      199,
+			Author: &Author{
+				FullName: "John Doe",
+				Website:  "https://johndoe.dev",
+			},
+		},
+		{
+			CourseId:   "JS202",
+			CourseName: "Advanced JavaScript",
+			Price:      299,
+			Author: &Author{
+				FullName: "Jane Smith",
+				Website:  "https://janesmith.io",
+			},
+		},
+		{
+			CourseId:   "GO303",
+			CourseName: "Mastering Go",
+			Price:      349,
+			Author: &Author{
+				FullName: "Abir Khan",
+				Website:  "https://abirkhan.dev",
+			},
+		},
+		{
+			CourseId:   "DB404",
+			CourseName: "Database Design",
+			Price:      249,
+			Author: &Author{
+				FullName: "Michael Lee",
+				Website:  "https://michaellee.dev",
+			},
+		},
+	}...)
+
+
+	
+	//routing
+	r.HandleFunc("/", serverHome).Methods("GET")
+	r.HandleFunc("/courses", getAllCourse).Methods("GET")
+	r.HandleFunc("/course/{id}", getOneCourse).Methods("GET")
+	r.HandleFunc("/create", craeteOneCourse).Methods("POST")
+	r.HandleFunc("/course/{id}", updateOneCourse).Methods("PUT")
+	r.HandleFunc("/course/{id}", deleteOneCourse).Methods("DELETE")
+
+
+
+
+
+
+	// listen to a port
+	log.Fatal(http.ListenAndServe(":4000", r))
+
 }
 
 

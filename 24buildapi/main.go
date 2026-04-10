@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -62,4 +64,52 @@ func getOneCourse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode("Now course found by that Id")
+}
+
+
+func craeteOneCourse(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("Create a Course")
+	w.Header().Set("Content-Type", "application/json")
+
+	// if body is empty
+	if r.Body == nil {
+		json.NewEncoder(w).Encode("Pls send some data")
+	}
+
+	//what about - {}
+	var course Course
+
+	_ = json.NewDecoder(r.Body).Decode(&course)
+
+	if  course.IsEmpty() {
+		json.NewEncoder(w).Encode("No data inside JSON")
+		return
+	}
+
+	course.CourseId = strconv.Itoa(rand.Intn(100))
+	courses = append(courses, course)
+
+	json.NewEncoder(w).Encode(course)
+
+}
+
+func updateOneCourse (w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("Update a Course")
+	w.Header().Set("Content-Type", "application/json")
+
+	params := mux.Vars(r)
+
+	for index, course := range courses {
+		if course.CourseId == params["id"] {
+			courses = append(courses[:index], courses[index+1:]...)
+			var course Course
+			_ = json.NewDecoder(r.Body).Decode(&course)
+			course.CourseId = params["id"]
+			courses = append(courses, course)
+			json.NewEncoder(w).Encode(course)
+			return
+		}
+	}
 }
